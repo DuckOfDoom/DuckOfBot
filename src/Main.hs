@@ -1,11 +1,12 @@
 {-# OPTIONS_GHC -Wall #-}
 {-# LANGUAGE OverloadedStrings #-}
 
-import           Control.Lens ((^.))
+import           Control.Lens  ((^.))
+import           Control.Monad (unless)
 import           Data.Aeson
 import           JSON.Objects
-import           Network.Wreq (get, responseBody)
-import qualified UrlUtil      as U
+import           Network.Wreq  (get, responseBody)
+import qualified UrlUtil       as U
 
 testRequest :: IO ()
 testRequest = do
@@ -18,10 +19,7 @@ jsonTest = print (decode "{\"ok\":true,\"result\":{\"id\":243388629,\"first_name
 
 main :: IO ()
 main = do
-    putStrLn "Hello there!"
-    hasToken <- U.checkToken
-    if (hasToken) then
-      putStrLn "Nice token you got!"
-    else
-      putStrLn "Invalid token, bro!"
-      
+  putStrLn "Hello there!"
+  hasToken <- U.checkToken
+  unless hasToken (putStrLn "Please assign token to 'BOT_TOKEN' environment variable!")
+
