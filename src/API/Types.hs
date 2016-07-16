@@ -3,9 +3,11 @@
 
 -- A shortcut module for all JSON objects
 module API.Types
-  ( module API.Types.Response
-  , module API.Types.User)
+  ( module T )
   where
 
-import           API.Types.Response
-import           API.Types.User
+import           API.Types.Chat     as T
+import           API.Types.Message  as T
+import           API.Types.Response as T
+import           API.Types.Update   as T
+import           API.Types.User     as T

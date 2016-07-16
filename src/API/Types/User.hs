@@ -7,7 +7,7 @@ import           Data.Aeson
 
 -- User object
 data User = User
-          { id        :: Integer
+          { userId    :: Integer
           , firstName :: String
           , lastName  :: Maybe String
           , username  :: Maybe String
