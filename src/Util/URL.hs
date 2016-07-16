@@ -16,3 +16,6 @@ composeUrl url = do
 
 getMeUrl :: IO String
 getMeUrl = composeUrl "getMe"
+
+getUpdatesUrl :: IO String
+getUpdatesUrl = composeUrl "getUpdates"
