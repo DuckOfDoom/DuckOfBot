@@ -1,6 +1,6 @@
 {-# OPTIONS_GHC -Wall #-}
 
-module UrlUtil where
+module Util.URL where
 
 import           System.Environment
 

@@ -7,7 +7,7 @@ import           Control.Lens ((^.))
 import           Data.Aeson   (eitherDecode)
 import           JSON.Objects
 import           Network.Wreq (get, responseBody)
-import qualified UrlUtil      as U
+import qualified Util.URL      as U
 
 -- TODO: Figure out how to make polymorphic request function. This doesnt work =(
 --makeRequest :: (FromJSON a) => String -> IO (Either String (Response a))

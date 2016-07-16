@@ -4,9 +4,6 @@
 import           JSON.Objects
 import           API.Requests
 
---jsonTest :: IO ()
---jsonTest = print (eitherDecode "{\"ok\":true,\"result\":{\"id\":243388629,\"first_name\":\"DuckOfBot\",\"username\":\"DuckOfBot\"}}" :: Either String (Response User))
-
 main :: IO ()
 main = do
   putStrLn "Hello there! Let me check something..."
