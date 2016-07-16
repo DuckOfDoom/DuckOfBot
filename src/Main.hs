@@ -1,7 +1,7 @@
 {-# OPTIONS_GHC -Wall #-}
 {-# LANGUAGE OverloadedStrings #-}
 
-import           JSON.Objects
+import           API.Types
 import           API.Requests
 
 main :: IO ()

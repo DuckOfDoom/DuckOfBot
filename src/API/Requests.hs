@@ -4,10 +4,11 @@
 module API.Requests where
 
 import           Control.Lens ((^.))
-import           Data.Aeson   (eitherDecode, FromJSON)
-import           JSON.Objects
+import           Data.Aeson   (FromJSON, eitherDecode)
+import           API.Types
 import           Network.Wreq (get, responseBody)
-import qualified Util.URL      as U
+
+import qualified Util.URL     as U
 
 makeRequest :: (FromJSON a) => String -> IO (Either String (Response a))
 makeRequest url = do
@@ -15,5 +16,5 @@ makeRequest url = do
   return (eitherDecode (response ^. responseBody) :: (FromJSON a) => Either String (Response a))
 
 getMe :: IO (Either String (Response User))
-getMe = U.getMeUrl >>= makeRequest 
+getMe = U.getMeUrl >>= makeRequest
 
