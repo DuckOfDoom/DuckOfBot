@@ -5,7 +5,6 @@ module API.Types.User where
 
 import           Data.Aeson 
 
--- User object
 data User = User
           { userId    :: Integer
           , firstName :: String

@@ -5,15 +5,18 @@ module API.Types.Response where
 
 import           Data.Aeson
 
--- Polymorphic response type for all responses
 data Response a = Response
-                { ok     :: Bool
-                , result :: a
+                { ok          :: Bool
+                , result      :: Maybe a
+                , description :: Maybe String
+                , errorCode   :: Maybe Integer
                 }
                 deriving Show
 
 instance (FromJSON a) => FromJSON (Response a) where
   parseJSON (Object v) = Response <$>
                          v .: "ok" <*>
-                         v .: "result"
+                         v .:? "result" <*>
+                         v .:? "description" <*>
+                         v .:? "error_code" 
   parseJSON _ = fail "Failed to parse Response object!"

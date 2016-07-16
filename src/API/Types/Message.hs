@@ -7,7 +7,6 @@ import           Data.Aeson
 import           API.Types.User
 import           API.Types.Chat
 
--- Message object
 data Message = Message
              { messageId       :: Integer
              , from            :: Maybe User

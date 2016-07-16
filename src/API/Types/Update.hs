@@ -6,7 +6,6 @@ module API.Types.Update where
 import           API.Types.Message
 import           Data.Aeson
 
--- Update object
 data Update = Update
             { updateID      :: Integer
             , message       :: Maybe Message
