@@ -2,23 +2,17 @@
 
 module UrlUtil where
 
-import           Data.Maybe
 import           System.Environment
-
-checkToken :: IO Bool
-checkToken = isJust <$> lookupEnv "BOT_TOKEN"
 
 readToken :: IO String
 readToken = do
-              mToken <- lookupEnv "BOT_TOKEN"
-              return $ tokenize mToken
-  where tokenize (Just t) = t
-        tokenize Nothing = "TOKEN_NOT_FOUND"
+  mToken <- lookupEnv "BOT_TOKEN"
+  maybe (putStrLn "Please assign token to 'BOT_TOKEN' environment variable!" >> return "BOT_TOKEN") return mToken
 
 composeUrl :: String -> IO String
 composeUrl url = do
-                  t <- readToken
-                  return ("https://api.telegram.org/bot" ++ t ++ "/" ++ url)
+  t <- readToken
+  return ("https://api.telegram.org/bot" ++ t ++ "/" ++ url)
 
 getMeUrl :: IO String
 getMeUrl = composeUrl "getMe"

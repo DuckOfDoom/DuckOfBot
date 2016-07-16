@@ -1,26 +1,31 @@
 {-# OPTIONS_GHC -Wall #-}
 {-# LANGUAGE OverloadedStrings #-}
-{-# LANGUAGE DeriveGeneric #-}
+-- {-# LANGUAGE DeriveGeneric #-}
 
 module JSON.Objects where
 
 import Data.Aeson
-import GHC.Generics
+-- import GHC.Generics
  
--- TODO: Figure out how to make response type polymorphic
-data Response = Response 
+-- Polymorphic response type for all responses 
+data Response a = Response 
                 { ok :: Bool 
-                , result :: Maybe Object 
+                , result :: a 
                 }
-                deriving (Generic, Show)
+                deriving Show
 
-instance FromJSON Response 
+instance (FromJSON a) => FromJSON (Response a) where
+  parseJSON (Object v) = Response <$>
+                         v .: "ok" <*>
+                         v .: "result"
+  parseJSON _ = fail "Failed to parse Response object!"
 
+-- User object
 data User = User
           { id        :: Integer
           , firstName :: String
           , lastName  :: Maybe String
-          , userName  :: Maybe String
+          , username  :: Maybe String
           }
           deriving Show
 
@@ -31,5 +36,5 @@ instance FromJSON User where
                          v .:? "last_name" <*> 
                          v .:? "username"
 
-  parseJSON _ = error "can't parse"
+  parseJSON _ = fail "Failed to parse User object!"
 

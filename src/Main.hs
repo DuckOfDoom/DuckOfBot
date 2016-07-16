@@ -1,25 +1,16 @@
 {-# OPTIONS_GHC -Wall #-}
 {-# LANGUAGE OverloadedStrings #-}
 
-import           Control.Lens  ((^.))
-import           Control.Monad (unless)
-import           Data.Aeson
 import           JSON.Objects
-import           Network.Wreq  (get, responseBody)
-import qualified UrlUtil       as U
+import           API.Requests
 
-testRequest :: IO ()
-testRequest = do
-  url <- U.getMeUrl
-  r <- get url
-  putStr $ show $ r ^. responseBody
-
-jsonTest :: IO ()
-jsonTest = print (decode "{\"ok\":true,\"result\":{\"id\":243388629,\"first_name\":\"DuckOfBot\",\"username\":\"DuckOfBot\"}}" :: Maybe Response)
+--jsonTest :: IO ()
+--jsonTest = print (eitherDecode "{\"ok\":true,\"result\":{\"id\":243388629,\"first_name\":\"DuckOfBot\",\"username\":\"DuckOfBot\"}}" :: Either String (Response User))
 
 main :: IO ()
 main = do
-  putStrLn "Hello there!"
-  hasToken <- U.checkToken
-  unless hasToken (putStrLn "Please assign token to 'BOT_TOKEN' environment variable!")
-
+  putStrLn "Hello there! Let me check something..."
+  me <- getMe
+  putStrLn $ printMe me
+    where printMe (Left e) = "Whoops! Something went wrong: '" ++ e ++ "'"
+          printMe (Right (Response _ user)) = "All is good! Nice to meet you! My name is: " ++ firstName user
