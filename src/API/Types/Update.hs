@@ -7,7 +7,7 @@ import           API.Types.Message
 import           Data.Aeson
 
 data Update = Update
-            { updateID      :: Integer
+            { updateId      :: Integer
             , message       :: Maybe Message
             , editedMessage :: Maybe Message
             }

@@ -16,6 +16,11 @@ makeRequest url = do
   response <- get url
   return (eitherDecode (response ^. responseBody) :: (FromJSON a) => Either String (Response a))
 
+--makeRequestWith :: (FromJSON a) => String -> Options -> IO (Either String (Response a))
+--makeRequestWith url options = do
+--  response <- getWith options url
+--  return (eitherDecode (response ^. responseBody) :: (FromJSON a) => Either String (Response a))
+
 -- Get info about yourself
 getMe :: IO (Either String (Response User))
 getMe = Urls.getMeUrl >>= makeRequest
@@ -23,3 +28,9 @@ getMe = Urls.getMeUrl >>= makeRequest
 -- Get updates from server
 getUpdates :: IO (Either String (Response [Update]))
 getUpdates = Urls.getUpdatesUrl >>= makeRequest
+
+-- Get upates from server with specific offset
+--getUpdates :: Integer -> IO (Either String (Response [Update]))
+--getUpdates = do
+--  url <- Urls.getUpdatesUrl
+--  opts <- defaults >>= makeRequest
