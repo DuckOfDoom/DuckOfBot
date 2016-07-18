@@ -19,3 +19,6 @@ getMeUrl = composeUrl "getMe"
 
 getUpdatesUrl :: IO String
 getUpdatesUrl = composeUrl "getUpdates"
+
+sendMessageUrl :: IO String
+sendMessageUrl = composeUrl "sendMessage"

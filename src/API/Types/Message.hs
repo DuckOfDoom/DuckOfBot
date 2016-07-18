@@ -3,9 +3,9 @@
 
 module API.Types.Message where
 
-import           Data.Aeson
-import           API.Types.User
 import           API.Types.Chat
+import           API.Types.User
+import           Data.Aeson
 
 data Message = Message
              { messageId       :: Integer
