@@ -2,15 +2,23 @@
 
 module UrlUtil where
 
--- TODO: Read token from env
-token :: String
-token = "nil"
+import           Data.Maybe
+import           System.Environment
 
-baseURL :: String
-baseURL = "https://api.telegram.org"
+checkToken :: IO Bool
+checkToken = isJust <$> lookupEnv "BOT_TOKEN"
 
-composeUrl :: String -> String
-composeUrl url = baseURL ++ "/bot" ++ token ++ "/" ++ url
+readToken :: IO String
+readToken = do
+              mToken <- lookupEnv "BOT_TOKEN"
+              return $ tokenize mToken
+  where tokenize (Just t) = t
+        tokenize Nothing = "TOKEN_NOT_FOUND"
 
-getMeUrl :: String 
+composeUrl :: String -> IO String
+composeUrl url = do
+                  t <- readToken
+                  return ("https://api.telegram.org/bot" ++ t ++ "/" ++ url)
+
+getMeUrl :: IO String
 getMeUrl = composeUrl "getMe"
