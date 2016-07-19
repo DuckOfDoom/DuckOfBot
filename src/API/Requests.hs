@@ -8,7 +8,7 @@ import           API.Types
 import           Control.Lens  ((.~), (^.))
 import           Data.Aeson    (FromJSON, eitherDecode, encode)
 import           Data.Function ((&))
-import           Network.Wreq  (defaults, get, header, post, postWith,
+import           Network.Wreq  (defaults, get, getWith, param, header, post, postWith,
                                 responseBody)
 
 import qualified Util.URL      as Urls
@@ -28,9 +28,16 @@ getMe = Urls.getMeUrl >>= makeRequest
 getUpdates :: IO (Either String (Response [Update]))
 getUpdates = Urls.getUpdatesUrl >>= makeRequest
 
-sendMessage :: SendMessageArgs -> IO (Either String (Response Message))
-sendMessage args = do
+getUpdatesWithId :: Integer -> IO (Either String (Response [Update]))
+getUpdatesWithId id = do
+  url <- Urls.getUpdatesUrl
+  response <- getWith options url 
+  return (eitherDecode (response ^. responseBody) :: Either String (Response [Update]))
+  where options = defaults & param "update_id" .~ ["1"]
+
+sendMessage :: String -> String -> IO (Either String (Response Message))
+sendMessage chatId messageText = do
   url <- Urls.sendMessageUrl
-  response <- postWith options url (encode args)
+  response <- postWith options url (encode (SendMessageArgs chatId messageText))
   return (eitherDecode (response ^. responseBody) :: Either String (Response Message))
   where options = defaults & header "Content-Type" .~ ["application/json"]
