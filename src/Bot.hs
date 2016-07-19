@@ -3,34 +3,50 @@
 module Bot where
 
 import           API.Requests
-import           API.Types.Chat as C
-import           API.Types.Message as M
-import           API.Types.Update as U
+import           API.Types.Chat     as C
+import           API.Types.Message  as M
 import           API.Types.Response as R
-import           API.Types (Update)
-import           API.Args
-import           Control.Concurrent (threadDelay, forkIO)
-import           Control.Monad      (forever)
+import           API.Types.Update   as U
+import           Control.Concurrent (forkIO, threadDelay)
 import           Data.Maybe
 
-startGetUpdatesLoopWithDelay :: Int -> IO ()
-startGetUpdatesLoopWithDelay delay = 
-    getUpdates' 0  -- Starting with update #1
-  where getUpdates' id = do
-          response <- getUpdatesWithId id 
-          processUpdates response
-          threadDelay (1000000 * delay)
-          getUpdates' 0
+startGetUpdatesLoopWithDelay :: Float -> IO ()
+startGetUpdatesLoopWithDelay delay = do
+  initialUpdates <- getUpdates
+  unpackedUpdates <- unpackUpdates initialUpdates
+  lastUpdateId <- getLastUpdateId unpackedUpdates
+  mapM_ processUpdate unpackedUpdates
+  getUpdatesLoop delay lastUpdateId
 
-processUpdates :: Either String (Response [Update]) -> IO ()
-processUpdates (Left e) = putStrLn $ "Can't process updates: " ++ e
-processUpdates (Right r) = mapM_ processUpdate $ fromJust $ R.result r
+getUpdatesLoop :: Float -> Integer -> IO ()
+getUpdatesLoop delay lastReceivedUpdateId = do
+  updates <- getUpdatesWithId (lastReceivedUpdateId + 1)
+  unpackedUpdates <- unpackUpdates updates
+  lastUpdateId <- getLastUpdateId unpackedUpdates
+  mapM_ processUpdate unpackedUpdates
+  threadDelay $ truncate (1000000 * delay)
+  getUpdatesLoop delay lastUpdateId
+
+unpackUpdates :: Either String (Response [Update]) -> IO [Update]
+unpackUpdates (Left e) = do
+  putStrLn ("Can't process updates: " ++ e)
+  return []
+unpackUpdates (Right r) = return (fromJust $ R.result r)
+
+getLastUpdateId :: [Update] -> IO Integer
+getLastUpdateId [] = return 0
+getLastUpdateId xs = return $ (U.updateId . last) xs
 
 processUpdate :: Update -> IO ()
-processUpdate u = do 
-  threadId <- forkIO $ do 
-    response <- sendMessage chatId "I hear ya"
+processUpdate u = do
+  _ <- forkIO $ do
+    _ <- sendMessage originChatId (getMessage (fromMaybe "" (M.text msg)))
     return ()
   return ()
   where msg = fromJust $ U.message u
-        chatId = show $ C.chatId $ M.chat msg
+        originChatId = C.chatId $ M.chat msg
+
+getMessage :: String -> String
+getMessage s = case s of
+                    _ -> "You said: " ++ s
+

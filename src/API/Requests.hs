@@ -8,36 +8,41 @@ import           API.Types
 import           Control.Lens  ((.~), (^.))
 import           Data.Aeson    (FromJSON, eitherDecode, encode)
 import           Data.Function ((&))
-import           Network.Wreq  (defaults, get, getWith, param, header, post, postWith,
-                                responseBody)
+import           Data.String (fromString)
+import           Network.Wreq as Wreq  (getWith, postWith, defaults, param, header, responseBody)
+import           Network.Wreq.Types (Postable)
 
 import qualified Util.URL      as Urls
 
--- TODO: Make get and post requests with polymorphism for different responses
+-- Get something without parameters
+get :: (FromJSON a) => String -> IO (Either String (Response a))
+get url = do
+  response <- Wreq.getWith defaults url
+  return (eitherDecode (response ^. Wreq.responseBody) :: (FromJSON a) => Either String (Response a))
 
-makeRequest :: (FromJSON a) => String -> IO (Either String (Response a))
-makeRequest url = do
-  response <- get url
-  return (eitherDecode (response ^. responseBody) :: (FromJSON a) => Either String (Response a))
+post :: (Postable a, FromJSON b) => String -> a -> IO (Either String (Response b))
+post url payload = do
+  response <- Wreq.postWith options url payload
+  return (eitherDecode (response ^. Wreq.responseBody) :: (FromJSON b) => Either String (Response b))
+  where options = defaults & header "Content-Type" .~ ["application/json"]
 
 -- Get info about yourself
 getMe :: IO (Either String (Response User))
-getMe = Urls.getMeUrl >>= makeRequest
+getMe = Urls.getMeUrl >>= get
 
 -- Get updates from server
 getUpdates :: IO (Either String (Response [Update]))
-getUpdates = Urls.getUpdatesUrl >>= makeRequest
+getUpdates = Urls.getUpdatesUrl >>= get
 
 getUpdatesWithId :: Integer -> IO (Either String (Response [Update]))
-getUpdatesWithId id = do
+getUpdatesWithId offset = do
   url <- Urls.getUpdatesUrl
-  response <- getWith options url 
+  response <- Wreq.getWith options url 
   return (eitherDecode (response ^. responseBody) :: Either String (Response [Update]))
-  where options = defaults & param "update_id" .~ ["1"]
+  where options = defaults & param "offset" .~ [fromString $ show offset]
 
-sendMessage :: String -> String -> IO (Either String (Response Message))
-sendMessage chatId messageText = do
+sendMessage :: Integer -> String -> IO ()
+sendMessage targetChatId messageText = do 
   url <- Urls.sendMessageUrl
-  response <- postWith options url (encode (SendMessageArgs chatId messageText))
-  return (eitherDecode (response ^. responseBody) :: Either String (Response Message))
-  where options = defaults & header "Content-Type" .~ ["application/json"]
+  _ <- post url (encode (SendMessageArgs (show targetChatId) messageText)) :: IO (Either String (Response Message))
+  return ()
