@@ -12,30 +12,23 @@ import           Data.Maybe
 
 startGetUpdatesLoopWithDelay :: Float -> IO ()
 startGetUpdatesLoopWithDelay delay = do
-  initialUpdates <- getUpdates
-  unpackedUpdates <- unpackUpdates initialUpdates
-  lastUpdateId <- getLastUpdateId unpackedUpdates
-  mapM_ processUpdate unpackedUpdates
+  response <- getUpdates
+  lastUpdateId <- processUpdates response 
   getUpdatesLoop delay lastUpdateId
+    where getUpdatesLoop d lastId = do
+            response <- getUpdatesWithId (lastId + 1)
+            newId <- processUpdates response
+            threadDelay $ truncate (1000000 * delay)
+            getUpdatesLoop d newId
 
-getUpdatesLoop :: Float -> Integer -> IO ()
-getUpdatesLoop delay lastReceivedUpdateId = do
-  updates <- getUpdatesWithId (lastReceivedUpdateId + 1)
-  unpackedUpdates <- unpackUpdates updates
-  lastUpdateId <- getLastUpdateId unpackedUpdates
-  mapM_ processUpdate unpackedUpdates
-  threadDelay $ truncate (1000000 * delay)
-  getUpdatesLoop delay lastUpdateId
-
-unpackUpdates :: Either String (Response [Update]) -> IO [Update]
-unpackUpdates (Left e) = do
-  putStrLn ("Can't process updates: " ++ e)
-  return []
-unpackUpdates (Right r) = return (fromJust $ R.result r)
-
-getLastUpdateId :: [Update] -> IO Integer
-getLastUpdateId [] = return 0
-getLastUpdateId xs = return $ (U.updateId . last) xs
+processUpdates :: Either String (Response [Update]) -> IO Integer
+processUpdates (Left e) = fail e
+processUpdates (Right response) = let updates = (fromJust $ R.result response) 
+                                      getLastId = U.updateId . last
+                                      in
+                                  do 
+                                  mapM_ processUpdate updates
+                                  return $ if (null updates) then 0 else getLastId updates
 
 processUpdate :: Update -> IO ()
 processUpdate u = do
