@@ -52,7 +52,8 @@ sendMessage targetChatId messageText = do
 sendPhoto :: Integer -> String -> IO ()
 sendPhoto targetChatId filePath = do
   url <- Urls.sendPhotoUrl
-  _ <- Wreq.postWith options url (partFile "file" filePath)
+  _ <- Wreq.postWith options url (partFile "photo" filePath)
   return ()
   where options = defaults & param "chat_id" .~ [fromString $ show targetChatId]
+                           & header "Content-Type" .~ ["multipart/form-data"]
 

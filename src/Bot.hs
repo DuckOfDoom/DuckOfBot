@@ -41,6 +41,6 @@ processUpdate u = do
 reply :: Message -> IO ()
 reply msg = case (fromMaybe "" (M.text msg)) of 
                           "/herecomedatboi" -> sendMessage originChatId "Oh shit whaddup!"
---                          "/pi" -> sendPhoto originChatId "curse.png"
+                          "/pi" -> sendPhoto originChatId "curse.png"
                           _ -> sendMessage originChatId "Don't know what you're talking about"
   where originChatId = C.chatId $ M.chat msg
