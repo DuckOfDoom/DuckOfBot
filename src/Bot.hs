@@ -32,14 +32,15 @@ processUpdates (Right response) = let updates = (fromJust $ R.result response)
 
 processUpdate :: Update -> IO ()
 processUpdate u = do
+  putStrLn $ "Received Update: " ++ show u
   _ <- forkIO $ do
-    _ <- sendMessage originChatId (getMessage (fromMaybe "" (M.text msg)))
+    _ <- reply $ fromJust $ U.message u
     return ()
   return ()
-  where msg = fromJust $ U.message u
-        originChatId = C.chatId $ M.chat msg
 
-getMessage :: String -> String
-getMessage s = case s of
-                    _ -> "You said: " ++ s
-
+reply :: Message -> IO ()
+reply msg = case (fromMaybe "" (M.text msg)) of 
+                          "/herecomedatboi" -> sendMessage originChatId "Oh shit whaddup!"
+--                          "/pi" -> sendPhoto originChatId "curse.png"
+                          _ -> sendMessage originChatId "Don't know what you're talking about"
+  where originChatId = C.chatId $ M.chat msg

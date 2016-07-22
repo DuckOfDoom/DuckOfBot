@@ -22,3 +22,6 @@ getUpdatesUrl = composeUrl "getUpdates"
 
 sendMessageUrl :: IO String
 sendMessageUrl = composeUrl "sendMessage"
+
+sendPhotoUrl :: IO String
+sendPhotoUrl = composeUrl "sendPhoto"

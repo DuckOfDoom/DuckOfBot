@@ -1,17 +1,16 @@
 {-# OPTIONS_GHC -Wall #-}
-{-# LANGUAGE DeriveGeneric #-}
+{-# LANGUAGE OverloadedStrings #-}
 
 module API.Args where
 
-import           Data.Aeson   (ToJSON)
-import           GHC.Generics (Generic)
-
-{-# ANN module "HLint: ignore Use camelCase" #-}
+import           Data.Aeson   (ToJSON, toJSON, object, (.=))
 
 data SendMessageArgs = SendMessageArgs
-                     { chat_id :: String
+                     { messageChatId :: String
                      , text    :: String
                      }
-                     deriving (Generic, Show)
+                     deriving Show
 
-instance ToJSON SendMessageArgs
+instance ToJSON SendMessageArgs where 
+  toJSON (SendMessageArgs sendMessageChatId txt) = 
+    object ["chat_id" .= sendMessageChatId, "text" .= txt]
