@@ -56,4 +56,3 @@ sendPhoto targetChatId filePath = do
   return ()
   where options = defaults & param "chat_id" .~ [fromString $ show targetChatId]
                            & header "Content-Type" .~ ["multipart/form-data"]
-
