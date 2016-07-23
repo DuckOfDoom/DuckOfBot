@@ -3,56 +3,54 @@
 
 module API.Requests where
 
-import           API.Args
 import           API.Types
 import           Control.Lens  ((.~), (^.))
-import           Data.Aeson    (FromJSON, eitherDecode, encode)
+import           Data.Aeson    (eitherDecode)
 import           Data.Function ((&))
-import           Data.String (fromString)
-import           Network.Wreq as Wreq  (getWith, postWith, defaults, param, header, responseBody, partFile)
-import           Network.Wreq.Types (Postable)
-
+import           Data.String   (fromString)
+import           Network.Wreq  (defaults, getWith, header, param, partFile,
+                                postWith, responseBody)
 import qualified Util.URL      as Urls
-
--- Get something without parameters
-get :: (FromJSON a) => String -> IO (Either String (Response a))
-get url = do
-  response <- Wreq.getWith defaults url
-  return (eitherDecode (response ^. Wreq.responseBody) :: (FromJSON a) => Either String (Response a))
-
--- Post something with application/json contentType
-post :: (Postable a, FromJSON b) => String -> a -> IO (Either String (Response b))
-post url payload = do
-  response <- Wreq.postWith options url payload
-  return (eitherDecode (response ^. Wreq.responseBody) :: (FromJSON b) => Either String (Response b))
-  where options = defaults & header "Content-Type" .~ ["application/json"]
 
 -- Get info about yourself
 getMe :: IO (Either String (Response User))
-getMe = Urls.getMeUrl >>= get
+getMe = do
+    url <- Urls.getMeUrl
+    response <- getWith defaults url
+    return (eitherDecode (response ^. responseBody) :: Either String (Response User))
 
 -- Get updates from server
 getUpdates :: IO (Either String (Response [Update]))
-getUpdates = Urls.getUpdatesUrl >>= get
+getUpdates = do
+  url <- Urls.getUpdatesUrl
+  response <- getWith defaults url
+  return (eitherDecode (response ^. responseBody) :: Either String (Response [Update]))
 
 getUpdatesWithId :: Integer -> IO (Either String (Response [Update]))
 getUpdatesWithId offset = do
   url <- Urls.getUpdatesUrl
-  response <- Wreq.getWith options url 
+  response <- getWith options url
   return (eitherDecode (response ^. responseBody) :: Either String (Response [Update]))
   where options = defaults & param "offset" .~ [fromString $ show offset]
 
 sendMessage :: Integer -> String -> IO ()
-sendMessage targetChatId messageText = do 
+sendMessage targetChatId messageText = do
   url <- Urls.sendMessageUrl
-  _ <- post url (encode (SendMessageArgs (show targetChatId) messageText)) :: IO (Either String (Response Message))
+  _ <- getWith options url 
   return ()
+  where options = defaults & param "chat_id" .~ [fromString $ show targetChatId]
+                           & param "text"    .~ [fromString messageText]
 
 -- sendPhoto takes a chat ID and a filename of the photo relative to exe dir
 sendPhoto :: Integer -> String -> IO ()
 sendPhoto targetChatId filePath = do
   url <- Urls.sendPhotoUrl
-  _ <- Wreq.postWith options url (partFile "photo" filePath)
+  _ <- postWith options url (partFile "photo" filePath)
   return ()
-  where options = defaults & param "chat_id" .~ [fromString $ show targetChatId]
-                           & header "Content-Type" .~ ["multipart/form-data"]
+  where options = defaults & header "Content-Type" .~ ["multipart/form-data"]
+                           & param "chat_id"       .~ [fromString $ show targetChatId]
+
+--answerInlineQuery String -> [InlineQueryResult] -> IO ()
+--answerInlineQuery queryId results = do
+--  url <- Urls.answerInlineQueryUrl
+--  _ <- post options url

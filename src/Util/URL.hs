@@ -25,3 +25,6 @@ sendMessageUrl = composeUrl "sendMessage"
 
 sendPhotoUrl :: IO String
 sendPhotoUrl = composeUrl "sendPhoto"
+
+answerInlineQueryUrl :: IO String
+answerInlineQueryUrl = composeUrl "answerInlineQuery"
