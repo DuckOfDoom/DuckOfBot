@@ -19,5 +19,7 @@ executable duckbot
   build-depends:       base >= 4.7 && < 5,
                        wreq,
                        aeson,
-                       lens
+                       lens,
+                       random,
+                       text
 

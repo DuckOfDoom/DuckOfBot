@@ -3,14 +3,16 @@
 module Bot where
 
 import           Data.Aeson
+import           Data.List
 import           API.Requests
-import qualified API.Types.Chat     as C
 import qualified API.Types.Message  as M
 import qualified API.Types.Response as R
 import qualified API.Types.Update   as U
 import qualified API.Types.Inline   as I
 import           Control.Concurrent (forkIO, threadDelay)
 import           Data.Maybe
+import qualified Modules.Roll as Roll
+import qualified Modules.Default as Default
 
 startGetUpdatesLoopWithDelay :: Float -> IO ()
 startGetUpdatesLoopWithDelay delay = do
@@ -32,10 +34,11 @@ processUpdates (Right response) = let updates = (fromJust $ R.result response)
                                   mapM_ processUpdate updates
                                   return $ if null updates then 0 else getLastId updates
 
+-- process a single update in another thread
 processUpdate :: U.Update -> IO ()
 processUpdate (U.Update _ msg Nothing) = do -- Process an Update that has a Message
   putStrLn $ "Received Message: " ++ show msg
-  _ <- forkIO $ do
+  _ <- forkIO $ do 
     _ <- replyToMessage $ fromJust msg
     return ()
   return ()
@@ -49,12 +52,12 @@ processUpdate u = do
   putStrLn $ "Dont know how to process update: " ++ show u
   return ()
 
+-- here is where text commands are routed
 replyToMessage :: M.Message -> IO ()
-replyToMessage msg = case fromMaybe "" (M.text msg) of 
-                          "/herecomedatboi" -> sendMessage originChatId "Oh shit whaddup!"
-                          "/пиздос" -> sendPhoto originChatId "pi.png"
-                          unknown -> sendMessage originChatId ("Sorry, I don't know what you mean by '" ++ unknown ++ "'")
-  where originChatId = C.chatId $ M.chat msg
+replyToMessage msg | isCommand "/число" = Roll.respondToRoll msg
+                   | isCommand "/пиздос" = Default.respondToPi msg
+                   | otherwise = Default.respondToUnknown msg
+  where isCommand = ( `isPrefixOf` fromMaybe "" (M.text msg))
 
 replyToInlineQuery :: I.InlineQuery -> IO ()
 replyToInlineQuery (I.InlineQuery qId _ q _) = do 
