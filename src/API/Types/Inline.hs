@@ -42,17 +42,18 @@ instance FromJSON ChosenInlineResult where
 -- A single type for all query results. 
 -- Since API decides by the "type" field, which result it is, we can use one type for all results
 data InlineQueryResult = InlineQueryResult
-                            { resultType :: String
-                            , resultId   :: String
+                            { resultType     :: String
+                            , resultId       :: String
                             , resultPhotoURL :: String
                             , resultThumbURL :: String
                             }
+                            deriving Show
 
 
 instance ToJSON InlineQueryResult where
-  toJSON (InlineQueryResult rType rId rPhotoUrl rThumbUrl) = 
-    object [ "type" .= rType
-           , "id" .= rId
+  toJSON (InlineQueryResult rType rId rPhotoUrl rThumbUrl) =
+    object [ "type"      .= rType
+           , "id"        .= rId
            , "photo_url" .= rPhotoUrl
            , "thumb_url" .= rThumbUrl
            ]

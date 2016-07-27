@@ -2,11 +2,13 @@
 
 module Bot where
 
+import           Data.Aeson
 import           API.Requests
 import qualified API.Types.Chat     as C
 import qualified API.Types.Message  as M
 import qualified API.Types.Response as R
 import qualified API.Types.Update   as U
+import qualified API.Types.Inline   as I
 import           Control.Concurrent (forkIO, threadDelay)
 import           Data.Maybe
 
@@ -39,6 +41,9 @@ processUpdate (U.Update _ msg Nothing) = do -- Process an Update that has a Mess
   return ()
 processUpdate (U.Update _ Nothing qry) = do  -- Process and Update that has an Inline Query
   putStrLn $ "Received InlineQuery: " ++ show qry
+  _ <- forkIO $ do
+    _ <- replyToInlineQuery $ fromJust qry
+    return ()
   return ()
 processUpdate u = do
   putStrLn $ "Dont know how to process update: " ++ show u
@@ -51,5 +56,14 @@ replyToMessage msg = case fromMaybe "" (M.text msg) of
                           unknown -> sendMessage originChatId ("Sorry, I don't know what you mean by '" ++ unknown ++ "'")
   where originChatId = C.chatId $ M.chat msg
 
---replyToInlineQuery :: InlineQuery -> IO ()
---replyToInlineQuery (InlineQuery _ _ q) = 
+replyToInlineQuery :: I.InlineQuery -> IO ()
+replyToInlineQuery (I.InlineQuery qId _ q _) = do 
+    _ <- answerInlineQuery qId [I.InlineQueryResult "photo"
+                               "derp"
+                               "https://pp.vk.me/c4579/u940182/-6/x_394a5ca8.jpg"
+                               "https://pp.vk.me/c4579/u940182/-6/x_394a5ca8.jpg"]
+    return ()
+
+test :: IO ()
+test = print q
+  where q = toJSON (I.InlineQueryResult "photo" "derp" "https://pp.vk.me/c4579/u940182/-6/x_394a5ca8.jpg" "https://pp.vk.me/c4579/u940182/-6/x_394a5ca8.jpg")

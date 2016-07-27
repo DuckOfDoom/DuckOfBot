@@ -7,6 +7,7 @@ module API.Types
   where
 
 import           API.Types.Chat     as T
+import           API.Types.Inline   as T
 import           API.Types.Message  as T
 import           API.Types.Response as T
 import           API.Types.Update   as T

@@ -5,7 +5,7 @@ module API.Requests where
 
 import           API.Types
 import           Control.Lens  ((.~), (^.))
-import           Data.Aeson    (eitherDecode)
+import           Data.Aeson    (eitherDecode, toJSON)
 import           Data.Function ((&))
 import           Data.String   (fromString)
 import           Network.Wreq  (defaults, getWith, header, param, partFile,
@@ -50,7 +50,11 @@ sendPhoto targetChatId filePath = do
   where options = defaults & header "Content-Type" .~ ["multipart/form-data"]
                            & param "chat_id"       .~ [fromString $ show targetChatId]
 
---answerInlineQuery String -> [InlineQueryResult] -> IO ()
---answerInlineQuery queryId results = do
---  url <- Urls.answerInlineQueryUrl
---  _ <- post options url
+answerInlineQuery :: String -> [InlineQueryResult] -> IO ()
+answerInlineQuery inlineQueryId results = do
+  url <- Urls.answerInlineQueryUrl
+  _ <- getWith options url 
+  return ()
+  where json = toJSON results
+        options = defaults & param "inline_query_id" .~ [fromString $ show inlineQueryId]
+                           & param "results"         .~ [fromString $ show json] 
