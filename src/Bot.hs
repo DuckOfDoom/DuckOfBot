@@ -54,7 +54,7 @@ processUpdate u = do
 
 -- here is where text commands are routed
 replyToMessage :: M.Message -> IO ()
-replyToMessage msg | isCommand "/число" = Roll.respondToRoll msg
+replyToMessage msg | isCommand "/число" || isCommand "/roll" = Roll.respondToRoll msg
                    | isCommand "/пиздос" = Default.respondToPi msg
                    | otherwise = Default.respondToUnknown msg
   where isCommand = ( `isPrefixOf` fromMaybe "" (M.text msg))
