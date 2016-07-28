@@ -1,7 +1,9 @@
 {-# OPTIONS_GHC -Wall #-}
 {-# LANGUAGE OverloadedStrings #-}
 
-module Modules.Roll (respondToRoll) where
+module Modules.Roll 
+  --(respondToRoll)
+  where
 
 import           System.Random     (randomRIO)
 
@@ -12,6 +14,7 @@ import           API.Types.Chat
 
 import           Text.Read (readMaybe)
 import           Data.Maybe 
+import  Data.Char
 import           Control.Arrow ((>>>))
 
 respondToRoll :: Message -> IO ()
@@ -30,7 +33,7 @@ roll (l, u) | u < l = roll (u, l)
             | otherwise = randomRIO (l, u)
 
 readArgs :: String -> (Int, Int)
-readArgs = drop' >>> replace' >>> read' >>> fromMaybe (1, 100)
-  where drop' = dropWhile (/= '(') >>> takeWhile (/= ')') >>> (++ ")")
-        replace' = map (\c -> if c == '-' then ',' else c) 
-        read' x = readMaybe x :: Maybe (Int, Int)
+readArgs = takeTuple >>> replaceDash >>> readResult >>> fromMaybe (1, 100)
+  where takeTuple = dropWhile (not . isDigit) >>> takeWhile (\s -> (isDigit s) || (s == '-') || (s == ' '))
+        replaceDash = map (\c -> if c == '-' then ',' else c) 
+        readResult x = readMaybe ("(" ++ x ++ ")") :: Maybe (Int, Int)
