@@ -21,5 +21,6 @@ executable duckbot
                        aeson,
                        lens,
                        random,
-                       text
+                       text,
+                       utc
 

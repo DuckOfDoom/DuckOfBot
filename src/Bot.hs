@@ -11,8 +11,10 @@ import qualified API.Types.Update   as U
 import qualified API.Types.Inline   as I
 import           Control.Concurrent (forkIO, threadDelay)
 import           Data.Maybe
+
 import qualified Modules.Roll as Roll
 import qualified Modules.Default as Default
+import qualified Modules.Countdown as Countdown
 
 startGetUpdatesLoopWithDelay :: Float -> IO ()
 startGetUpdatesLoopWithDelay delay = do
