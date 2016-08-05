@@ -59,6 +59,7 @@ replyToMessage :: M.Message -> IO ()
 replyToMessage msg | isCommand "/число" || isCommand "/roll" = Roll.respondToRoll msg
                    | isCommand "/пиздос" = Default.respondToPi msg
                    | isCommand "/когдатамлегион" = Countdown.respondToLegionCountdown msg
+                   | isCommand "/когдатамкаражан" = Countdown.respondToKharazhanCountdown msg
                    | otherwise = Default.respondToUnknown msg
   where isCommand = ( `isPrefixOf` fromMaybe "" (M.text msg))
 
