@@ -2,24 +2,24 @@
 
 module Bot where
 
-import           Data.Aeson
-import           Data.List
 import           API.Requests
+import qualified API.Types.Inline   as I
 import qualified API.Types.Message  as M
 import qualified API.Types.Response as R
 import qualified API.Types.Update   as U
-import qualified API.Types.Inline   as I
 import           Control.Concurrent (forkIO, threadDelay)
+import           Data.Aeson
+import           Data.List
 import           Data.Maybe
 
-import qualified Modules.Roll as Roll
-import qualified Modules.Default as Default
-import qualified Modules.Countdown as Countdown
+import qualified Modules.Countdown  as Countdown
+import qualified Modules.Default    as Default
+import qualified Modules.Roll       as Roll
 
 startGetUpdatesLoopWithDelay :: Float -> IO ()
 startGetUpdatesLoopWithDelay delay = do
   response <- getUpdates
-  lastUpdateId <- processUpdates response 
+  lastUpdateId <- processUpdates response
   getUpdatesLoop delay lastUpdateId
     where getUpdatesLoop d lastId = do
             response <- getUpdatesWithId (lastId + 1)
@@ -29,10 +29,10 @@ startGetUpdatesLoopWithDelay delay = do
 
 processUpdates :: Either String (R.Response [U.Update]) -> IO Integer
 processUpdates (Left e) = fail e
-processUpdates (Right response) = let updates = (fromJust $ R.result response) 
+processUpdates (Right response) = let updates = (fromJust $ R.result response)
                                       getLastId = U.updateId . last
                                       in
-                                  do 
+                                  do
                                   mapM_ processUpdate updates
                                   return $ if null updates then 0 else getLastId updates
 
@@ -40,7 +40,7 @@ processUpdates (Right response) = let updates = (fromJust $ R.result response)
 processUpdate :: U.Update -> IO ()
 processUpdate (U.Update _ msg Nothing) = do -- Process an Update that has a Message
   putStrLn $ "Received Message: " ++ show msg
-  _ <- forkIO $ do 
+  _ <- forkIO $ do
     _ <- replyToMessage $ fromJust msg
     return ()
   return ()
@@ -58,11 +58,12 @@ processUpdate u = do
 replyToMessage :: M.Message -> IO ()
 replyToMessage msg | isCommand "/число" || isCommand "/roll" = Roll.respondToRoll msg
                    | isCommand "/пиздос" = Default.respondToPi msg
+                   | isCommand "/когдатамлегион" = Countdown.respondToLegionCountdown msg
                    | otherwise = Default.respondToUnknown msg
   where isCommand = ( `isPrefixOf` fromMaybe "" (M.text msg))
 
 replyToInlineQuery :: I.InlineQuery -> IO ()
-replyToInlineQuery (I.InlineQuery qId _ q _) = do 
+replyToInlineQuery (I.InlineQuery qId _ _ _) = do
     _ <- answerInlineQuery qId [I.InlineQueryResult "photo"
                                "derp"
                                "https://pp.vk.me/c4579/u940182/-6/x_394a5ca8.jpg"

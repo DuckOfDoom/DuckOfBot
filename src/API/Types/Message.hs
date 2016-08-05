@@ -35,3 +35,6 @@ instance FromJSON Message where
                          v .:? "text"
 
   parseJSON _ = fail "Failed to parse Message object!"
+
+getMessageChatID :: Message -> Integer
+getMessageChatID = chatId . chat
