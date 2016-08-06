@@ -9,7 +9,6 @@ import qualified API.Types.Response as R
 import qualified API.Types.Update   as U
 import           Control.Concurrent (forkIO, threadDelay)
 import           Data.List
-import           Data.Maybe
 
 import qualified Modules.Countdown  as Countdown
 import qualified Modules.Default    as Default
@@ -18,35 +17,34 @@ import qualified Modules.Roll       as Roll
 startGetUpdatesLoopWithDelay :: Float -> IO ()
 startGetUpdatesLoopWithDelay delay = do
   response <- getUpdates
-  lastUpdateId <- processUpdates response
+  lastUpdateId <- processUpdatesAndReturnLastId response
   getUpdatesLoop delay lastUpdateId
     where getUpdatesLoop d lastId = do
             response <- getUpdatesWithId (lastId + 1)
-            newId <- processUpdates response
+            newId <- processUpdatesAndReturnLastId response
             threadDelay $ truncate (1000000 * delay)
             getUpdatesLoop d newId
 
-processUpdates :: Either String (R.Response [U.Update]) -> IO Integer
-processUpdates (Left e) = fail e
-processUpdates (Right response) = let updates = (fromJust $ R.result response)
-                                      getLastId = U.updateId . last
-                                      in
-                                  do
-                                  mapM_ processUpdate updates
-                                  return $ if null updates then 0 else getLastId updates
+processUpdatesAndReturnLastId :: Either String (R.Response [U.Update]) -> IO Integer
+processUpdatesAndReturnLastId (Left e) = fail e
+processUpdatesAndReturnLastId (Right (R.Response _ Nothing _ _)) = return 0
+processUpdatesAndReturnLastId (Right (R.Response _ (Just []) _ _)) = return 0
+processUpdatesAndReturnLastId (Right (R.Response _ (Just updates) _ _)) = do
+  mapM_ processUpdate updates
+  return $ (U.updateId . last) updates
 
 -- process a single update in another thread
 processUpdate :: U.Update -> IO ()
-processUpdate (U.Update _ msg Nothing) = do -- Process an Update that has a Message
+processUpdate (U.Update _ (Just msg) Nothing) = do -- Process an Update that has a Message
   putStrLn $ "Received Message: " ++ show msg
   _ <- forkIO $ do
-    _ <- replyToMessage $ fromJust msg
+    _ <- replyToMessage msg
     return ()
   return ()
-processUpdate (U.Update _ Nothing qry) = do  -- Process and Update that has an Inline Query
+processUpdate (U.Update _ Nothing (Just qry)) = do  -- Process and Update that has an Inline Query
   putStrLn $ "Received InlineQuery: " ++ show qry
   _ <- forkIO $ do
-    _ <- replyToInlineQuery $ fromJust qry
+    _ <- replyToInlineQuery qry
     return ()
   return ()
 processUpdate u = do
@@ -55,12 +53,22 @@ processUpdate u = do
 
 -- here is where text commands are routed
 replyToMessage :: M.Message -> IO ()
-replyToMessage msg | isCommand "/число" || isCommand "/roll" = Roll.respondToRoll msg
+replyToMessage msg@(M.Message _ _ _ _ _ _ _ _ _ (Just text))
+                   | isCommand "/число" || isCommand "/roll" = Roll.respondToRoll msg
                    | isCommand "/пиздос" = Default.respondToPi msg
                    | isCommand "/когдатамлегион" = Countdown.respondToLegionCountdown msg
                    | isCommand "/когдатамкаражан" = Countdown.respondToKharazhanCountdown msg
                    | otherwise = Default.respondToUnknown msg
-  where isCommand = ( `isPrefixOf` fromMaybe "" (M.text msg))
+  where isCommand = (`isPrefixOf` text)
+replyToMessage _ = return ()
+
+--replyToMessage :: M.Message -> IO ()
+--replyToMessage msg | isCommand "/число" || isCommand "/roll" = Roll.respondToRoll msg
+--                   | isCommand "/пиздос" = Default.respondToPi msg
+--                   | isCommand "/когдатамлегион" = Countdown.respondToLegionCountdown msg
+--                   | isCommand "/когдатамкаражан" = Countdown.respondToKharazhanCountdown msg
+--                   | otherwise = Default.respondToUnknown msg
+--  where isCommand = ( `isPrefixOf` fromMaybe "" (M.text msg))
 
 
 replyToInlineQuery :: I.InlineQuery -> IO ()
