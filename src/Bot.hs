@@ -8,7 +8,6 @@ import qualified API.Types.Message  as M
 import qualified API.Types.Response as R
 import qualified API.Types.Update   as U
 import           Control.Concurrent (forkIO, threadDelay)
-import           Data.Aeson
 import           Data.List
 import           Data.Maybe
 
@@ -63,14 +62,11 @@ replyToMessage msg | isCommand "/число" || isCommand "/roll" = Roll.respond
                    | otherwise = Default.respondToUnknown msg
   where isCommand = ( `isPrefixOf` fromMaybe "" (M.text msg))
 
+
 replyToInlineQuery :: I.InlineQuery -> IO ()
 replyToInlineQuery (I.InlineQuery qId _ _ _) = do
     _ <- answerInlineQuery qId [I.InlineQueryResult "photo"
                                "derp"
-                               "https://pp.vk.me/c4579/u940182/-6/x_394a5ca8.jpg"
-                               "https://pp.vk.me/c4579/u940182/-6/x_394a5ca8.jpg"]
+                               "https://pp.vk.me/c637330/v637330182/21c0/xJxt12gw5To.jpg"
+                               "https://pp.vk.me/c637330/v637330182/21c0/xJxt12gw5To.jpg"]
     return ()
-
-test :: IO ()
-test = print q
-  where q = toJSON (I.InlineQueryResult "photo" "derp" "https://pp.vk.me/c4579/u940182/-6/x_394a5ca8.jpg" "https://pp.vk.me/c4579/u940182/-6/x_394a5ca8.jpg")

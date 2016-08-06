@@ -1,12 +1,15 @@
 {-# OPTIONS_GHC -Wall #-}
+{-# LANGUAGE DeriveGeneric     #-}
 {-# LANGUAGE OverloadedStrings #-}
 
 module API.Types.Inline where
 
-import           API.Types.User  
+import           API.Types.User
 import           Data.Aeson
+import           Data.Monoid
+import           GHC.Generics
 
--- Chat object
+-- InlineQuery object, as it comes from server
 data InlineQuery = InlineQuery
                  { queryId     :: String
                  , queryFrom   :: User
@@ -25,6 +28,7 @@ instance FromJSON InlineQuery where
   parseJSON _ = fail "Failed to parse InlineQuery object!"
 
 
+-- ChosenInlineResult object as it comes from server
 data ChosenInlineResult = ChosenInlineResult
                         { chosenResultId    :: String
                         , chosenResultFrom  :: User
@@ -39,21 +43,17 @@ instance FromJSON ChosenInlineResult where
 
   parseJSON _ = fail "Failed to parse ChosenInlineResult object!"
 
--- A single type for all query results. 
--- Since API decides by the "type" field, which result it is, we can use one type for all results
+-- A single InlineQueryResult to be sent to server
 data InlineQueryResult = InlineQueryResult
                             { resultType     :: String
                             , resultId       :: String
                             , resultPhotoURL :: String
                             , resultThumbURL :: String
                             }
-                            deriving Show
+                            deriving (Show, Generic)
 
 
 instance ToJSON InlineQueryResult where
-  toJSON (InlineQueryResult rType rId rPhotoUrl rThumbUrl) =
-    object [ "type"      .= rType
-           , "id"        .= rId
-           , "photo_url" .= rPhotoUrl
-           , "thumb_url" .= rThumbUrl
-           ]
+  toJSON = genericToJSON defaultOptions
+  toEncoding (InlineQueryResult rType rId rPhotoUrl rThumbUrl) =
+    pairs ("type" .= rType <> "id" .= rId <> "photo_url" .= rPhotoUrl <> "thumb_url" .= rThumbUrl)
