@@ -14,6 +14,9 @@ import qualified Modules.Countdown  as Countdown
 import qualified Modules.Default    as Default
 import qualified Modules.Roll       as Roll
 
+-- Temp import
+import Hearthstone.API.Requests
+
 startGetUpdatesLoopWithDelay :: Float -> IO ()
 startGetUpdatesLoopWithDelay delay = do
   response <- getUpdates
