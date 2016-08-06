@@ -62,15 +62,6 @@ replyToMessage msg@(M.Message _ _ _ _ _ _ _ _ _ (Just text))
   where isCommand = (`isPrefixOf` text)
 replyToMessage _ = return ()
 
---replyToMessage :: M.Message -> IO ()
---replyToMessage msg | isCommand "/число" || isCommand "/roll" = Roll.respondToRoll msg
---                   | isCommand "/пиздос" = Default.respondToPi msg
---                   | isCommand "/когдатамлегион" = Countdown.respondToLegionCountdown msg
---                   | isCommand "/когдатамкаражан" = Countdown.respondToKharazhanCountdown msg
---                   | otherwise = Default.respondToUnknown msg
---  where isCommand = ( `isPrefixOf` fromMaybe "" (M.text msg))
-
-
 replyToInlineQuery :: I.InlineQuery -> IO ()
 replyToInlineQuery (I.InlineQuery qId _ _ _) = do
     _ <- answerInlineQuery qId [I.InlineQueryResult "photo"
