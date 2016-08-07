@@ -2,7 +2,7 @@
 {-# LANGUAGE DeriveGeneric     #-}
 {-# LANGUAGE OverloadedStrings #-}
 
-module Hearthstone.API.Types where
+module HearthstoneAPI.Types where 
 
 import           Data.Aeson
 import           GHC.Generics

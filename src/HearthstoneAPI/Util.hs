@@ -1,6 +1,6 @@
 {-# OPTIONS_GHC -Wall #-}
 
-module Hearthstone.Util 
+module HearthstoneAPI.Util 
   ( getSearchUrl
   , readToken
   , getQueryLocale
