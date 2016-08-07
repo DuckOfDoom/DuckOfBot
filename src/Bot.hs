@@ -10,12 +10,14 @@ import qualified API.Types.Update   as U
 import           Control.Concurrent (forkIO, threadDelay)
 import           Data.List
 
+import           Data.Maybe  (mapMaybe)
+
 import qualified Modules.Countdown  as Countdown
 import qualified Modules.Default    as Default
 import qualified Modules.Roll       as Roll
 
--- Temp import
-import Hearthstone.API.Requests
+import           Hearthstone.API.Requests (searchCards)
+import           Hearthstone.API.Types
 
 startGetUpdatesLoopWithDelay :: Float -> IO ()
 startGetUpdatesLoopWithDelay delay = do
@@ -66,9 +68,16 @@ replyToMessage msg@(M.Message _ _ _ _ _ _ _ _ _ (Just text))
 replyToMessage _ = return ()
 
 replyToInlineQuery :: I.InlineQuery -> IO ()
-replyToInlineQuery (I.InlineQuery qId _ _ _) = do
-    _ <- answerInlineQuery qId [I.InlineQueryResult "photo"
-                               "derp"
-                               "https://pp.vk.me/c637330/v637330182/21c0/xJxt12gw5To.jpg"
-                               "https://pp.vk.me/c637330/v637330182/21c0/xJxt12gw5To.jpg"]
+replyToInlineQuery (I.InlineQuery qId _ q _) = do
+    cards <- searchCards q
+    _ <- answerInlineQuery qId (mapMaybe cardToInlineQueryResult cards)
     return ()
+
+cardToInlineQueryResult :: Card -> Maybe I.InlineQueryResult
+cardToInlineQueryResult (Card cardId _ _ (Just imageUrl) _) = Just (I.InlineQueryResult "photo" cardId imageUrl imageUrl)
+cardToInlineQueryResult _ = Nothing
+
+--[I.InlineQueryResult "photo"
+--                               "derp"
+--                               "https://pp.vk.me/c637330/v637330182/21c0/xJxt12gw5To.jpg"
+--                               "https://pp.vk.me/c637330/v637330182/21c0/xJxt12gw5To.jpg"]

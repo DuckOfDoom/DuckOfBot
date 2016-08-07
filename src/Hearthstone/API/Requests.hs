@@ -17,12 +17,14 @@ import           Network.Wreq          (defaults, getWith, header, param, respon
 
 
 -- TODO: Catch status code exceptions!
-searchCards :: String -> IO (Either String [Card])
+searchCards :: String -> IO [Card]
 searchCards cName = do
   options <- liftM addPrms getDefaultsWithHeader
   response <- getWith options (getSearchUrl cName)
-  return (eitherDecode (response ^. responseBody) :: Either String [Card])
+  return $ toList (eitherDecode (response ^. responseBody) :: Either String [Card])
     where addPrms o = o & param "locale" .~ [fromString $ getQueryLocale cName]
+          toList (Left _) = []
+          toList (Right cs) = cs
 
 getDefaultsWithHeader = do
   token <- readToken

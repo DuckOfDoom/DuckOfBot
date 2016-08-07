@@ -8,7 +8,8 @@ import           Data.Aeson
 import           GHC.Generics
 
 data Card = Card
-          { name    :: String
+          { cardId  :: String
+          , name    :: String
           , cardSet :: Maybe String
           , img     :: Maybe String
           , imgGold :: Maybe String
