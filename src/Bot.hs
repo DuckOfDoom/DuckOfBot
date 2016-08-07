@@ -66,4 +66,3 @@ replyToMessage _ = return ()
 -- here is where inline queries are routed
 replyToInlineQuery :: I.InlineQuery -> IO ()
 replyToInlineQuery (I.InlineQuery qId _ qText _) = Hearthstone.respondToCardSearchQuery qId qText
-  where startsWith = (`isPrefixOf` qText)

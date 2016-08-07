@@ -17,7 +17,8 @@ readToken = do
 -- We need to find out what card language user is trying to get.
 -- I didnt figure out a better way yet
 getQueryLocale :: String -> String
-getQueryLocale s | ch `elem` ['a'..'z'] = "enGB"
+getQueryLocale s | null s = "enGB" 
+                 | ch `elem` ['a'..'z'] = "enGB"
                  | ch `elem` ['а'..'я'] = "ruRU"
                  | otherwise = "enGB"
   where ch = toLower . head . dropWhile (== ' ') $ s

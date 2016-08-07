@@ -13,14 +13,18 @@ import           Data.Function         ((&))
 import           Data.Aeson            (eitherDecode)
 import           Data.String           (fromString)
 
-import           Network.Wreq          (defaults, getWith, header, param, responseBody)
+import           Network.Wreq          (defaults, getWith, header, param, responseBody, Response)
+import           Control.Exception     (try, SomeException)
+import           Data.ByteString.Lazy  (ByteString)
 
 
 searchCards :: String -> IO [Card]
 searchCards cName = do
   options <- liftM addPrms getDefaultsWithHeader
-  response <- getWith options (getSearchUrl cName) -- TODO: Return empty list on 404!
-  return $ toList (eitherDecode (response ^. responseBody) :: Either String [Card])
+  response <- try (getWith options (getSearchUrl cName)) :: IO (Either SomeException (Response ByteString)) -- TODO: Catch only StatusCodeExceptions!
+  case response of 
+       Left ex -> putStrLn ("[HearthstoneAPI] Caught exeption: " ++ show ex) >> return []
+       Right r -> return $ toList (eitherDecode (r ^. responseBody) :: Either String [Card])
     where addPrms o = o & param "locale" .~ [fromString $ getQueryLocale cName]
           toList (Left _) = []
           toList (Right cs) = cs
