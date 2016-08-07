@@ -1,6 +1,8 @@
 {-# OPTIONS_GHC -Wall #-}
 
-module Modules.Hearthstone where
+module Modules.Hearthstone 
+  ( respondToCardSearchQuery )
+  where
 
 import           HearthstoneAPI.Requests (searchCards)
 import           HearthstoneAPI.Types    (Card (..))

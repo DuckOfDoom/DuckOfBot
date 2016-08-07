@@ -1,7 +1,9 @@
 {-# OPTIONS_GHC -Wall -fno-warn-missing-signatures #-}
 {-# LANGUAGE OverloadedStrings #-}
 
-module HearthstoneAPI.Requests where
+module HearthstoneAPI.Requests
+  ( searchCards
+  ) where
 
 import           HearthstoneAPI.Types
 import           HearthstoneAPI.Util  (getQueryLocale, getSearchUrl, readToken)

@@ -1,7 +1,14 @@
 {-# OPTIONS_GHC -Wall #-}
 {-# LANGUAGE OverloadedStrings #-}
 
-module API.Requests where
+module API.Requests
+  ( getMe
+  , getUpdates
+  , getUpdatesWithId
+  , sendMessage
+  , sendPhoto
+  , answerInlineQuery
+  ) where
 
 import           API.Types
 import           Control.Lens         ((.~), (^.))

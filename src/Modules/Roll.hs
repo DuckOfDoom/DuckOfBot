@@ -1,7 +1,9 @@
 {-# OPTIONS_GHC -Wall #-}
 {-# LANGUAGE OverloadedStrings #-}
 
-module Modules.Roll where
+module Modules.Roll 
+  ( respondToRoll )
+  where
 
 import           System.Random     (randomRIO)
 

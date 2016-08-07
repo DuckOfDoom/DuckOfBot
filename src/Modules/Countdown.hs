@@ -1,6 +1,9 @@
 {-# OPTIONS_GHC -Wall #-}
 
-module Modules.Countdown where
+module Modules.Countdown
+  ( respondToLegionCountdown
+  , respondToKharazhanCountdown
+  ) where
 
 import           API.Requests      (sendMessage)
 import           API.Types.Message (Message, getMessageChatID)
