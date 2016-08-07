@@ -1,3 +1,5 @@
+{-# OPTIONS_GHC -Wall #-}
+
 module Util.Time where
 
 import           Data.Maybe
@@ -19,12 +21,10 @@ fromSeconds seconds = Timespan d h m s
   where d = seconds `div` 86400
         h = (seconds - d * 86400) `div` 3600
         m = (seconds - d * 86400 - h * 3600) `div` 60
-        s = (seconds - d * 86400 - h * 3600 - m * 60)
+        s = seconds - d * 86400 - h * 3600 - m * 60
 
 getCurrentTime :: IO DateTime
-getCurrentTime = do
-  t <- getUnixTime :: IO DateTime
-  return t
+getCurrentTime = getUnixTime :: IO DateTime
 
 makeDateTime :: Integer -> Integer -> Integer -> Integer -> Integer -> Integer -> DateTime
 makeDateTime y m d h mi sec = fromJust $ setYear y (epoch :: DateTime)

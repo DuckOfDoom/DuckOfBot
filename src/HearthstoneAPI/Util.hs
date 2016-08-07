@@ -1,13 +1,13 @@
 {-# OPTIONS_GHC -Wall #-}
 
-module HearthstoneAPI.Util 
+module HearthstoneAPI.Util
   ( getSearchUrl
   , readToken
   , getQueryLocale
   ) where
 
+import           Data.Char          (toLower)
 import           System.Environment
-import           Data.Char             (toLower)
 
 readToken :: IO String
 readToken = do
@@ -17,7 +17,7 @@ readToken = do
 -- We need to find out what card language user is trying to get.
 -- I didnt figure out a better way yet
 getQueryLocale :: String -> String
-getQueryLocale s | null s = "enGB" 
+getQueryLocale s | null s = "enGB"
                  | ch `elem` ['a'..'z'] = "enGB"
                  | ch `elem` ['а'..'я'] = "ruRU"
                  | otherwise = "enGB"

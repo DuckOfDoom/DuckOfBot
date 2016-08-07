@@ -3,17 +3,17 @@
 module Bot where
 
 import           API.Requests
-import qualified API.Types.Inline     as I
-import qualified API.Types.Message    as M
-import qualified API.Types.Response   as R
-import qualified API.Types.Update     as U
-import           Control.Concurrent   (forkIO, threadDelay)
+import qualified API.Types.Inline    as I
+import qualified API.Types.Message   as M
+import qualified API.Types.Response  as R
+import qualified API.Types.Update    as U
+import           Control.Concurrent  (forkIO, threadDelay)
 import           Data.List
 
-import qualified Modules.Countdown    as Countdown
-import qualified Modules.Default      as Default
-import qualified Modules.Hearthstone  as Hearthstone
-import qualified Modules.Roll         as Roll
+import qualified Modules.Countdown   as Countdown
+import qualified Modules.Default     as Default
+import qualified Modules.Hearthstone as Hearthstone
+import qualified Modules.Roll        as Roll
 
 startGetUpdatesLoopWithDelay :: Float -> IO ()
 startGetUpdatesLoopWithDelay delay = do

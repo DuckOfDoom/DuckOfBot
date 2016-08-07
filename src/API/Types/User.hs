@@ -3,7 +3,7 @@
 
 module API.Types.User where
 
-import           Data.Aeson 
+import           Data.Aeson
 
 data User = User
           { userId    :: Integer
@@ -14,10 +14,10 @@ data User = User
           deriving Show
 
 instance FromJSON User where
-  parseJSON (Object v) = User <$> 
-                         v .: "id" <*> 
-                         v .: "first_name" <*> 
-                         v .:? "last_name" <*> 
+  parseJSON (Object v) = User <$>
+                         v .: "id" <*>
+                         v .: "first_name" <*>
+                         v .:? "last_name" <*>
                          v .:? "username"
 
   parseJSON _ = fail "Failed to parse User object!"

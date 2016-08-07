@@ -18,5 +18,5 @@ instance (FromJSON a) => FromJSON (Response a) where
                          v .: "ok" <*>
                          v .:? "result" <*>
                          v .:? "description" <*>
-                         v .:? "error_code" 
+                         v .:? "error_code"
   parseJSON _ = fail "Failed to parse Response object!"

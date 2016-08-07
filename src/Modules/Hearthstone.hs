@@ -2,17 +2,17 @@
 
 module Modules.Hearthstone where
 
-import HearthstoneAPI.Types (Card(..))
-import HearthstoneAPI.Requests (searchCards)
+import           HearthstoneAPI.Requests (searchCards)
+import           HearthstoneAPI.Types    (Card (..))
 
-import API.Requests (answerInlineQuery)
-import API.Types.Inline (InlineQueryResult(..))
-import Data.Maybe (mapMaybe)
+import           API.Requests            (answerInlineQuery)
+import           API.Types.Inline        (InlineQueryResult (..))
+import           Data.Maybe              (mapMaybe)
 
 respondToCardSearchQuery :: String -> String -> IO ()
 respondToCardSearchQuery queryId queryText = do
     putStrLn queryText
-    cards <- searchCards (dropWhile (== ' ') queryText) 
+    cards <- searchCards (dropWhile (== ' ') queryText)
     answerInlineQuery queryId (cardsToResults cards)
 
 cardsToResults :: [Card] -> [InlineQueryResult]

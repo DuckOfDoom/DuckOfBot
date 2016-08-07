@@ -3,14 +3,14 @@
 
 module API.Types.Update where
 
-import           API.Types.Message
 import           API.Types.Inline
+import           API.Types.Message
 import           Data.Aeson
 
 data Update = Update
-            { updateId      :: Integer
-            , message       :: Maybe Message
-            , inlineQuery   :: Maybe InlineQuery
+            { updateId    :: Integer
+            , message     :: Maybe Message
+            , inlineQuery :: Maybe InlineQuery
             }
             deriving Show
 
