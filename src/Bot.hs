@@ -1,6 +1,8 @@
 {-# OPTIONS_GHC -Wall #-}
 
-module Bot where
+module Bot 
+  ( startGetUpdatesLoopWithDelay 
+  ) where
 
 import           API.Requests
 import qualified API.Types.Inline    as I
@@ -27,7 +29,7 @@ startGetUpdatesLoopWithDelay delay = do
             getUpdatesLoop d newId
 
 processUpdatesAndReturnLastId :: Either String (R.Response [U.Update]) -> IO Integer
-processUpdatesAndReturnLastId (Left e) = fail e
+processUpdatesAndReturnLastId (Left ex) = putStrLn ("[Bot] Failed to process updates: " ++ ex) >> return 0
 processUpdatesAndReturnLastId (Right (R.Response _ Nothing _ _)) = return 0
 processUpdatesAndReturnLastId (Right (R.Response _ (Just []) _ _)) = return 0
 processUpdatesAndReturnLastId (Right (R.Response _ (Just updates) _ _)) = do
