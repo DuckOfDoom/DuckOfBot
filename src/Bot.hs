@@ -1,7 +1,7 @@
 {-# OPTIONS_GHC -Wall #-}
 
-module Bot 
-  ( startGetUpdatesLoopWithDelay 
+module Bot
+  ( startGetUpdatesLoopWithDelay
   ) where
 
 import           API.Requests
