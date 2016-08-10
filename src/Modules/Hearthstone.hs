@@ -10,14 +10,27 @@ import           HearthstoneAPI.Types    (Card (..))
 import           API.Requests            (answerInlineQuery)
 import           API.Types.Inline        (InlineQueryResult (..))
 import           Data.Maybe              (mapMaybe)
+import           Data.List               (isPrefixOf)
 
 respondToCardSearchQuery :: String -> String -> IO ()
 respondToCardSearchQuery queryId queryText = do
-    putStrLn queryText
-    cards <- searchCards (dropWhile (== ' ') queryText)
-    answerInlineQuery queryId (cardsToResults cards)
+    cards <- searchCards $ cleanQuery queryText
+    answerInlineQuery queryId (take 50 $ (if isGoldQuery queryText then cardsToGoldResults else cardsToNormalResults) cards)
 
-cardsToResults :: [Card] -> [InlineQueryResult]
-cardsToResults = take 50 . mapMaybe toResult -- We take only 50 cards that contain pictures for results, since Telegram API allows max 50 results per query
-  where toResult (Card cId _ _ (Just imageUrl) _) = Just (InlineQueryResult "photo" cId imageUrl imageUrl)
+cardsToNormalResults :: [Card] -> [InlineQueryResult]
+cardsToNormalResults = mapMaybe toResult 
+  where toResult (Card cId _ _ (Just imageUrl) _) = Just (InlineQueryResult "photo" cId (Just imageUrl) Nothing imageUrl)
         toResult _ = Nothing
+
+cardsToGoldResults :: [Card] -> [InlineQueryResult]
+cardsToGoldResults = mapMaybe toResult
+  where toResult (Card cId _ _ _ (Just goldUrl)) = Just (InlineQueryResult "gif" cId Nothing (Just goldUrl) goldUrl)
+        toResult _ = Nothing
+
+isGoldQuery :: String -> Bool
+isGoldQuery q = ("g " `isPrefixOf` q)
+
+cleanQuery :: String -> String
+cleanQuery = dropWhile (== ' ') . (\q -> if (isGoldQuery q) 
+                                            then (drop 2 q)
+                                            else q)

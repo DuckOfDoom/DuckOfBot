@@ -45,9 +45,10 @@ instance FromJSON ChosenInlineResult where
 
 -- A single InlineQueryResult to be sent to server
 data InlineQueryResult = InlineQueryResult
-                            { resultType     :: String
-                            , resultId       :: String
-                            , resultPhotoURL :: String
+                            { resultId       :: String
+                            , resultType     :: String
+                            , resultPhotoURL :: Maybe String
+                            , resultGifURL   :: Maybe String
                             , resultThumbURL :: String
                             }
                             deriving (Show, Generic)
@@ -55,5 +56,8 @@ data InlineQueryResult = InlineQueryResult
 
 instance ToJSON InlineQueryResult where
   toJSON = genericToJSON defaultOptions
-  toEncoding (InlineQueryResult rType rId rPhotoUrl rThumbUrl) =
+  toEncoding (InlineQueryResult rType rId (Just rPhotoUrl) _ rThumbUrl) =
     pairs ("type" .= rType <> "id" .= rId <> "photo_url" .= rPhotoUrl <> "thumb_url" .= rThumbUrl)
+  toEncoding (InlineQueryResult rType rId _ (Just rGIFUrl) rThumbUrl) =
+    pairs ("type" .= rType <> "id" .= rId <> "gif_url" .= rGIFUrl <> "thumb_url" .= rThumbUrl)
+  toEncoding _ = pairs mempty

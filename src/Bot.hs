@@ -10,7 +10,7 @@ import qualified API.Types.Message   as M
 import qualified API.Types.Response  as R
 import qualified API.Types.Update    as U
 import           Control.Concurrent  (forkIO, threadDelay)
-import           Data.List
+import           Data.List           (isPrefixOf)
 
 import qualified Modules.Countdown   as Countdown
 import qualified Modules.Default     as Default
