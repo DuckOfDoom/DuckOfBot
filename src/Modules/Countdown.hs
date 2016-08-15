@@ -2,7 +2,6 @@
 
 module Modules.Countdown
   ( respondToLegionCountdown
-  , respondToKharazhanCountdown
   ) where
 
 import           API.Requests      (sendMessage)
