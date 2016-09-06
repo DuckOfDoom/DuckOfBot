@@ -1,10 +1,10 @@
 {-# OPTIONS_GHC -Wall #-}
 {-# LANGUAGE OverloadedStrings #-}
 
-module API.Types.Message where
+module BotAPI.Types.Message where
 
-import           API.Types.Chat
-import           API.Types.User
+import           BotAPI.Types.Chat
+import           BotAPI.Types.User
 import           Data.Aeson
 
 data Message = Message

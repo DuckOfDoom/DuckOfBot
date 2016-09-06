@@ -1,6 +1,6 @@
 {-# OPTIONS_GHC -Wall #-}
 
-module Util.URL where
+module BotAPI.URLUtil where
 
 import           System.Environment
 

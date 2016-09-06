@@ -2,8 +2,8 @@
 
 module Modules.Default where
 
-import           API.Requests
-import           API.Types.Message (Message, getMessageChatID, text)
+import           BotAPI.Requests
+import           BotAPI.Types.Message (Message, getMessageChatID, text)
 import           Data.Maybe (fromMaybe)
 
 respondToUnknown :: Message -> IO ()

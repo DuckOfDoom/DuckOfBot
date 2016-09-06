@@ -7,8 +7,8 @@ module Modules.Hearthstone
 import           HearthstoneAPI.Requests (searchCards)
 import           HearthstoneAPI.Types    (Card (..))
 
-import           API.Requests            (answerInlineQuery)
-import           API.Types.Inline        (InlineQueryResult (..))
+import           BotAPI.Requests            (answerInlineQuery)
+import           BotAPI.Types.Inline        (InlineQueryResult (..))
 import           Data.Maybe              (mapMaybe)
 import           Data.List               (isPrefixOf)
 

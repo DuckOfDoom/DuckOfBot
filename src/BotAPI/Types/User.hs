@@ -1,7 +1,7 @@
 {-# OPTIONS_GHC -Wall #-}
 {-# LANGUAGE OverloadedStrings #-}
 
-module API.Types.User where
+module BotAPI.Types.User where
 
 import           Data.Aeson
 

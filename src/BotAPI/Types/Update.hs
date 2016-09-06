@@ -1,10 +1,10 @@
 {-# OPTIONS_GHC -Wall #-}
 {-# LANGUAGE OverloadedStrings #-}
 
-module API.Types.Update where
+module BotAPI.Types.Update where
 
-import           API.Types.Inline
-import           API.Types.Message
+import           BotAPI.Types.Inline
+import           BotAPI.Types.Message
 import           Data.Aeson
 
 data Update = Update

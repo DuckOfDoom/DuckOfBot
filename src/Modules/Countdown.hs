@@ -4,8 +4,8 @@ module Modules.Countdown
   ( respondToLegionCountdown
   ) where
 
-import           API.Requests      (sendMessage)
-import           API.Types.Message (Message, getMessageChatID)
+import           BotAPI.Requests      (sendMessage)
+import           BotAPI.Types.Message (Message, getMessageChatID)
 import           Data.UTC
 import           Util.Time         (getCurrentTime, makeDateTime, subtractDT)
 

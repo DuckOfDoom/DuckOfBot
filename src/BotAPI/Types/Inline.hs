@@ -2,9 +2,9 @@
 {-# LANGUAGE DeriveGeneric     #-}
 {-# LANGUAGE OverloadedStrings #-}
 
-module API.Types.Inline where
+module BotAPI.Types.Inline where
 
-import           API.Types.User
+import           BotAPI.Types.User
 import           Data.Aeson
 import           Data.Monoid
 import           GHC.Generics

@@ -1,7 +1,7 @@
 {-# OPTIONS_GHC -Wall #-}
 {-# LANGUAGE OverloadedStrings #-}
 
-module API.Requests
+module BotAPI.Requests
   ( getMe
   , getUpdates
   , getUpdatesWithId
@@ -10,7 +10,7 @@ module API.Requests
   , answerInlineQuery
   ) where
 
-import           API.Types
+import           BotAPI.Types
 import           Control.Exception    (SomeException, try)
 import           Control.Lens         ((.~), (^.))
 import           Data.Aeson           (eitherDecode, encode)
@@ -21,7 +21,7 @@ import           Network.Wreq         (Options, defaults, getWith, header,
 import           Network.Wreq.Types   (Postable)
 
 import qualified Network.Wreq         as W (Response)
-import qualified Util.URL             as Urls
+import qualified BotAPI.URLUtil as Urls
 
 -- We need these to convert lazy Bytestrings from Aeson into Text for Wreq
 import           Data.ByteString.Lazy (ByteString, toStrict)
@@ -58,7 +58,7 @@ getMe = do
   url <- Urls.getMeUrl
   response <- tryGetWith defaults url
   case response of
-       Left ex -> putStrLn ("[TelegramAPI] Caught exception while trying to 'getMe': " ++ show ex) >> return (Left (show ex))
+       Left ex -> putStrLn ("[BotAPI] Caught exception while trying to 'getMe': " ++ show ex) >> return (Left (show ex))
        Right r -> return (eitherDecode (r ^. responseBody) :: Either String (Response User))
 
 -- Get updates from server
@@ -67,7 +67,7 @@ getUpdates = do
   url <- Urls.getUpdatesUrl
   response <- tryGetWith defaults url
   case response of
-       Left ex -> putStrLn ("[TelegramAPI] Caught exception while trying to 'getUpdates': " ++ show ex) >> return (Left (show ex))
+       Left ex -> putStrLn ("[BotAPI] Caught exception while trying to 'getUpdates': " ++ show ex) >> return (Left (show ex))
        Right r -> return (eitherDecode (r ^. responseBody) :: Either String (Response [Update]))
 
 getUpdatesWithId :: Integer -> IO (Either String (Response [Update]))
@@ -75,7 +75,7 @@ getUpdatesWithId offset = do
   url <- Urls.getUpdatesUrl
   response <- tryGetWith options url
   case response of
-       Left ex -> putStrLn ("[TelegramAPI] Caught exception while trying to 'getUpdatesWithId': " ++ show ex) >> return (Left (show ex))
+       Left ex -> putStrLn ("[BotAPI] Caught exception while trying to 'getUpdatesWithId': " ++ show ex) >> return (Left (show ex))
        Right r -> return (eitherDecode (r ^. responseBody) :: Either String (Response [Update]))
   where options = defaults & param "offset" .~ [fromString $ show offset]
 
@@ -85,7 +85,7 @@ sendMessage targetChatId messageText = do
   url <- Urls.sendMessageUrl
   response <- tryGetWith options url
   case response of
-       Left ex -> putStrLn ("[TelegramAPI] Caught exception while trying to 'sendMessage': " ++ show ex) >> return ()
+       Left ex -> putStrLn ("[BotAPI] Caught exception while trying to 'sendMessage': " ++ show ex) >> return ()
        Right _ -> return ()
   where options = defaults & param "chat_id" .~ [fromString $ show targetChatId]
                            & param "text"    .~ [fromString messageText]
@@ -96,7 +96,7 @@ sendPhoto targetChatId filePath = do
   url <- Urls.sendPhotoUrl
   response <- tryPostWith options url (partFile "photo" filePath)
   case response of
-       Left ex -> putStrLn ("[TelegramAPI] Caught exception while trying to 'sendPhoto': " ++ show ex) >> return ()
+       Left ex -> putStrLn ("[BotAPI] Caught exception while trying to 'sendPhoto': " ++ show ex) >> return ()
        Right _ -> return ()
   where options = defaults & header "Content-Type" .~ ["multipart/form-data"]
                            & param "chat_id"       .~ [fromString $ show targetChatId]
@@ -107,7 +107,7 @@ answerInlineQuery inlineQueryId results = do
   url <- Urls.answerInlineQueryUrl
   response <- tryGetWith options url
   case response of
-       Left ex -> putStrLn ("[TelegramAPI] Caught exception while trying to 'answerInlineQuery': " ++ show ex) >> return ()
+       Left ex -> putStrLn ("[BotAPI] Caught exception while trying to 'answerInlineQuery': " ++ show ex) >> return ()
        Right _ -> return ()
   where json = encode results
         options = defaults & param "inline_query_id" .~ [fromString inlineQueryId]

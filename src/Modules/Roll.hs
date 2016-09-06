@@ -7,10 +7,10 @@ module Modules.Roll
 
 import           System.Random     (randomRIO)
 
-import           API.Requests
-import           API.Types.Chat
-import           API.Types.Message
-import           API.Types.User
+import           BotAPI.Requests
+import           BotAPI.Types.Chat
+import           BotAPI.Types.Message
+import           BotAPI.Types.User
 
 import           Control.Arrow     ((>>>))
 import           Data.Char
