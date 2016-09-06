@@ -1,0 +1,3 @@
+[submodule "src/BotAPI"]
+	path = src/BotAPI
+	url = https://github.com/DuckOfDoom/TelegramBotAPI.git
