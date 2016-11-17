@@ -23,5 +23,7 @@ executable duckbot
                        lens,
                        random,
                        text,
+                       split,
+                       tagsoup,
                        utc
 

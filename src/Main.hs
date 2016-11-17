@@ -12,6 +12,7 @@ import           Data.List             (isPrefixOf)
 import qualified Modules.Countdown     as Countdown
 import qualified Modules.Default       as Default
 import qualified Modules.Hearthstone   as Hearthstone
+import qualified Modules.HearthstoneEvents          as HearthstoneEvents
 import qualified Modules.Roll          as Roll
 
 main :: IO ()
@@ -41,7 +42,7 @@ replyToMessage :: M.Message -> IO ()
 replyToMessage msg@(M.Message _ _ _ _ _ _ _ _ _ (Just text))
                    | isCommand "/число" || isCommand "/roll" = Roll.respondToRoll msg
                    | isCommand "/пиздос" = Default.respondToPi msg
-                   | isCommand "/когдатамлегион" = Countdown.respondToLegionCountdown msg
+                   | isCommand "/хскафе" = HearthstoneEvents.respondToEventsRequest msg
                    | otherwise = Default.respondToUnknown msg
   where isCommand = (`isPrefixOf` text)
 replyToMessage _ = return ()
