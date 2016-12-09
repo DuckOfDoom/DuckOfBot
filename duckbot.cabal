@@ -24,4 +24,5 @@ executable duckbot
                        random,
                        text,
                        utc
+  ghc-options:         -threaded -rtsopts -with-rtsopts=-N -Wall
 

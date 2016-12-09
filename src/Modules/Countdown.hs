@@ -1,5 +1,3 @@
-{-# OPTIONS_GHC -Wall #-}
-
 module Modules.Countdown
   ( respondToLegionCountdown
   ) where

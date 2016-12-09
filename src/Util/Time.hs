@@ -1,5 +1,3 @@
-{-# OPTIONS_GHC -Wall #-}
-
 module Util.Time where
 
 import           Data.Maybe

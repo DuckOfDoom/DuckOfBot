@@ -1,5 +1,3 @@
-{-# OPTIONS_GHC -Wall #-}
-
 module Modules.Default where
 
 import           BotAPI.Requests
