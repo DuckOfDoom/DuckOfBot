@@ -1,0 +1,41 @@
+name:                duckbot
+version:             0.1.0.0
+synopsis:            A telegram bot
+description:         Please see README.md
+homepage:            https://github.com/DuckOfDoom/duckbot
+license:             BSD3
+author:              Vladimir Yanovsky
+maintainer:          horaxlfa@gmail.com
+copyright:           2016 Author name here
+category:            Web
+
+extra-source-files:
+  - README.md
+
+ghc-options: -Wall -Werror
+
+default-extensions:
+  - OverloadedStrings
+
+library:
+  source-dirs: src
+  ghc-options: -threaded -rtsopts -with-rtsopts=-N -Wall
+  exposed-modules:
+  dependencies:
+    - base >= 4.9 && < 5
+    - wreq
+    - bytestring
+    - aeson
+    - lens
+    - random
+    - text
+    - time
+
+executables:
+  duckbot:
+    source-dirs: app
+    main: Main.hs
+    dependencies:
+      - base
+      - duckbot
+
