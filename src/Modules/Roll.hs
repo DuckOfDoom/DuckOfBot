@@ -1,5 +1,3 @@
-{-# LANGUAGE OverloadedStrings #-}
-
 module Modules.Roll
   ( respondToRoll )
   where

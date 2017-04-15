@@ -1,4 +1,4 @@
-{-# LANGUAGE OverloadedStrings, TemplateHaskell #-}
+{-# LANGUAGE TemplateHaskell #-}
 
 module BotAPI.Types.Update where
 

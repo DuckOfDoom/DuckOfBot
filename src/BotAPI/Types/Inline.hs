@@ -1,4 +1,4 @@
-{-# LANGUAGE OverloadedStrings, TemplateHaskell, DeriveGeneric #-}
+{-# LANGUAGE TemplateHaskell, DeriveGeneric #-}
 
 module BotAPI.Types.Inline where
 

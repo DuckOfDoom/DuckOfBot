@@ -4,7 +4,7 @@ import           BotAPI.Requests
 import           BotAPI.Types.Message 
 import           BotAPI.Types.Chat
 import           Data.Maybe (fromMaybe)
-import Control.Lens
+import           Control.Lens
 
 respondToUnknown :: Message -> IO ()
 respondToUnknown msg = sendMessage (msg ^. (chat . chatId)) ("Неизвестная команда: " ++ cmd)
