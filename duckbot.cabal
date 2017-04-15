@@ -23,7 +23,7 @@ library
   hs-source-dirs:
     src
   default-extensions: OverloadedStrings
-  ghc-options: -Wall -Werror -threaded -rtsopts -with-rtsopts=-N -Wall
+  ghc-options: -Wall -Werror
   build-depends:
     base >= 4.9 && < 5,
     wreq,
@@ -34,7 +34,8 @@ library
     text,
     time
   exposed-modules:
-    BotAPI.Bot
+    Bot
+    BotAPI.Processing
     BotAPI.Requests
     BotAPI.Types
     BotAPI.Types.Chat
@@ -57,7 +58,7 @@ executable duckbot
   hs-source-dirs:
     app
   default-extensions: OverloadedStrings
-  ghc-options: -Wall -Werror
+  ghc-options: -Wall -Werror -threaded -rtsopts -with-rtsopts=-N -Wall
   build-depends:
     base,
     duckbot
