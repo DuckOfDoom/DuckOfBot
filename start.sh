@@ -1,0 +1,3 @@
+export BOT_TOKEN=BOT_TOKEN_PLS
+export HEARTHSTONE_TOKEN=HS_TOKEN_PLS
+stack exec duckbot

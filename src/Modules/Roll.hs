@@ -2,39 +2,43 @@ module Modules.Roll
   ( respondToRoll )
   where
 
-import           System.Random        (randomRIO)
+import           Data.Text     (Text)
+import qualified Data.Text     as T
+import qualified Data.Char     as C
+import           System.Random (randomRIO)
 
-import           BotAPI.Requests
-import           BotAPI.Types.Chat
-import           BotAPI.Types.Message
-import           BotAPI.Types.User
+import BotAPI.Requests
+import BotAPI.Types.Chat
+import BotAPI.Types.Message
+import BotAPI.Types.User
 
-import           Control.Arrow        ((>>>))
-import           Control.Lens ((^.))
-import           Data.Char
-import           Data.Maybe
-import           Text.Read            (readMaybe)
+import Control.Arrow ((>>>))
+import Control.Lens  ((^.))
+import Data.Maybe
+import Text.Read     (readMaybe)
 
 respondToRoll :: Message -> IO ()
 respondToRoll msg = do
  rollResult <- roll args
  sendMessage chatId' (getRollMessage name rollResult args)
   where chatId' = msg ^. chat . chatId
-        name = case msg ^. from of 
+        name = case msg ^. from of
                     Nothing -> "UNKNOWN"
-                    Just u -> u ^. firstName
+                    Just u  -> u ^. firstName
         messageText = fromMaybe "" (msg ^. text)
         args = readArgs messageText
 
-getRollMessage :: String -> Int -> (Int, Int) -> String
-getRollMessage name result (l, u) = name ++ " выбрасывает " ++ show result ++ " (" ++ show l ++ "-" ++ show u ++ ")"
+getRollMessage :: Text -> Int -> (Int, Int) -> Text
+getRollMessage name result (l, u) =
+  mconcat [name, " выбрасывает ", T.pack $ show result, " (", T.pack $ show l, "-", T.pack $ show u, ")"]
 
 roll :: (Int, Int) -> IO Int
 roll (l, u) | u < l = roll (u, l)
             | otherwise = randomRIO (l, u)
 
-readArgs :: String -> (Int, Int)
+readArgs :: Text -> (Int, Int)
 readArgs = takeTuple >>> replaceDash >>> readResult >>> fromMaybe (1, 100)
-  where takeTuple = dropWhile (not . isDigit) >>> takeWhile (\s -> (isDigit s) || (s == '-') || (s == ' '))
-        replaceDash = map (\c -> if c == '-' then ',' else c)
-        readResult x = readMaybe ("(" ++ x ++ ")") :: Maybe (Int, Int)
+  where
+    takeTuple = T.dropWhile (not . C.isDigit) >>> T.takeWhile (\s -> (C.isDigit s) || (s == '-') || (s == ' '))
+    replaceDash = T.replace "-" ","
+    readResult x = readMaybe $ T.unpack $ mconcat ["(", x, ")"] :: Maybe (Int, Int)

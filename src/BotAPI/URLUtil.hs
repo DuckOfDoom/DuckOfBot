@@ -1,28 +1,41 @@
-module BotAPI.URLUtil where
+module BotAPI.URLUtil 
+  ( meUrl
+  , updatesUrl
+  , messageUrl
+  , photoUrl
+  , answerInlineQueryUrl
+  )
+  where
 
-import           System.Environment
+import Data.Monoid ((<>))
+import System.Environment (lookupEnv)
+import System.Exit (die)
+import Data.Text (Text)
+import qualified Data.Text as T (pack)
 
-readToken :: IO String
+meUrl :: IO Text
+meUrl = composeUrl "getMe"
+
+updatesUrl :: IO Text
+updatesUrl = composeUrl "getUpdates"
+
+messageUrl :: IO Text
+messageUrl = composeUrl "sendMessage"
+
+photoUrl :: IO Text
+photoUrl = composeUrl "sendPhoto"
+
+answerInlineQueryUrl :: IO Text
+answerInlineQueryUrl = composeUrl "answerInlineQuery"
+
+readToken :: IO Text
 readToken = do
   mToken <- lookupEnv "BOT_TOKEN"
-  maybe (putStrLn "Please assign token to 'BOT_TOKEN' environment variable!" >> return "BOT_TOKEN") return mToken
+  case mToken of 
+    Just t  -> pure $ T.pack t
+    Nothing -> die "Please assign token to 'BOT_TOKEN' environment variable!"
 
-composeUrl :: String -> IO String
+composeUrl :: Text -> IO Text
 composeUrl url = do
   t <- readToken
-  return ("https://api.telegram.org/bot" ++ t ++ "/" ++ url)
-
-getMeUrl :: IO String
-getMeUrl = composeUrl "getMe"
-
-getUpdatesUrl :: IO String
-getUpdatesUrl = composeUrl "getUpdates"
-
-sendMessageUrl :: IO String
-sendMessageUrl = composeUrl "sendMessage"
-
-sendPhotoUrl :: IO String
-sendPhotoUrl = composeUrl "sendPhoto"
-
-answerInlineQueryUrl :: IO String
-answerInlineQueryUrl = composeUrl "answerInlineQuery"
+  pure $ "https://api.telegram.org/bot" <> t <> "/" <> url

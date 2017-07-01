@@ -1,17 +1,18 @@
-{-# LANGUAGE DeriveGeneric     #-}
+{-# LANGUAGE DeriveGeneric #-}
 
 module HearthstoneAPI.Types where
 
-import           Data.Aeson
-import           GHC.Generics
+import Data.Aeson
+import Data.Text    (Text)
+import GHC.Generics
 
 data Card = Card
-          { cardId  :: String
-          , name    :: String
-          , cardSet :: Maybe String
-          , img     :: Maybe String
-          , imgGold :: Maybe String
-          }
-          deriving (Show, Generic)
+  { cardId  :: Text
+  , name    :: Text
+  , cardSet :: Maybe Text
+  , img     :: Maybe Text
+  , imgGold :: Maybe Text
+  }
+  deriving (Show, Generic)
 
 instance FromJSON Card where

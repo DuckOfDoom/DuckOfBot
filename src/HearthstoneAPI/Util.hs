@@ -4,26 +4,35 @@ module HearthstoneAPI.Util
   , getQueryLocale
   ) where
 
-import           Data.Char          (toLower)
-import           System.Environment
+import Data.Text (Text)
+import qualified Data.Char as C (toLower)
+import qualified Data.Text as T (pack, dropWhile, head, null)
+import System.Environment (lookupEnv)
 
-readToken :: IO String
+readToken :: IO Text
 readToken = do
   mToken <- lookupEnv "HEARTHSTONE_TOKEN"
-  maybe (putStrLn "Please assign Hearthstone API token to 'HEARTHSTONE_TOKEN' environment variable!" >> return "BOT_TOKEN") return mToken
+  case mToken of 
+    Just t -> pure $ T.pack t
+    Nothing -> do 
+      print ("Please assign Hearthstone API token to 'HEARTHSTONE_TOKEN' environment variable!" :: Text)
+      pure "BOT_TOKEN"
 
 -- We need to find out what card language user is trying to get.
 -- I didnt figure out a better way yet
-getQueryLocale :: String -> String
-getQueryLocale s | null s = "enGB"
-                 | ch `elem` ['a'..'z'] = "enGB"
-                 | ch `elem` ['а'..'я'] = "ruRU"
-                 | otherwise = "enGB"
-  where ch = toLower . head . dropWhile (== ' ') $ s
+getQueryLocale :: Text -> Text
+getQueryLocale s 
+  | T.null s = "enGB"
+  | ch `elem` ['a'..'z'] = "enGB"
+  | ch `elem` ['а'..'я'] = "ruRU"
+  | otherwise = "enGB"
+  where 
+    ch :: Char
+    ch = C.toLower . T.head . T.dropWhile (== ' ') $ s
 
-baseUrl :: String
+baseUrl :: Text
 baseUrl = "https://omgvamp-hearthstone-v1.p.mashape.com/cards"
 
 -- API endpoint includes card name as part of adress, not a param
-getSearchUrl :: String -> String
-getSearchUrl name = baseUrl ++ "/search/" ++ name
+getSearchUrl :: Text -> Text
+getSearchUrl name = mconcat [baseUrl, "/search/", name]
