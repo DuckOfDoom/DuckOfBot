@@ -1,6 +1,8 @@
--- This file has been generated from package.yaml by hpack version 0.15.0.
+-- This file has been generated from package.yaml by hpack version 0.28.2.
 --
 -- see: https://github.com/sol/hpack
+--
+-- hash: 3df160f5ed37837b3b71e9d6408391cf740f443fb14c5e80315fdc37f5ba07bc
 
 name:                duckbot
 version:             0.1.0.0
@@ -15,7 +17,6 @@ copyright:           2016 Author name here
 category:            Web
 build-type:          Simple
 cabal-version:       >= 1.10
-
 extra-source-files:
   README.md
 
@@ -25,14 +26,14 @@ library
   default-extensions: OverloadedStrings
   ghc-options: -Wall -Werror
   build-depends:
-    base >= 4.9 && < 5,
-    wreq,
-    bytestring,
     aeson,
+    base >=4.9 && <5,
+    bytestring,
     lens,
     random,
     text,
-    time
+    time,
+    wreq
   exposed-modules:
     Bot
     BotAPI.Processing
@@ -51,10 +52,14 @@ library
     Modules.Default
     Modules.Hearthstone
     Modules.Roll
+  other-modules:
+    Paths_duckbot
   default-language: Haskell2010
 
 executable duckbot
   main-is: Main.hs
+  other-modules:
+    Paths_duckbot
   hs-source-dirs:
     app
   default-extensions: OverloadedStrings

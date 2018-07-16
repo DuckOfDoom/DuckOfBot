@@ -19,7 +19,6 @@ default-extensions:
 
 library:
   source-dirs: src
-  exposed-modules:
   dependencies:
     - base >= 4.9 && < 5
     - wreq
