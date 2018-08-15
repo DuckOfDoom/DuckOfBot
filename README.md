@@ -1,2 +1,4 @@
 # duckbot
-WIP: Telegram bot written in Haskell
+Telegram bot written in Haskell
+
+Won't work on this anymore.
